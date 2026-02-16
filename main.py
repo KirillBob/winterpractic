@@ -16,7 +16,7 @@ def settings():
         return redirect('/all')
     return """
         <form method='POST'>
-        <div><label>Pash: <input type='text' name='root'></label></div>
+        <div><label>Path: <input type='text' name='root'></label></div>
         </form>"""
 
 
@@ -37,7 +37,7 @@ def form_file():
         return Response(json_data, mimetype='application/json; charset=utf-8')
     return """
         <form method='POST'>
-        <div><label>Pash: <input type='text' name='path'></label></div>
+        <div><label>Path: <input type='text' name='path'></label></div>
         </form>"""
 
 @app.route("/add", methods=['GET', 'POST'])
@@ -53,7 +53,7 @@ def upload_file():
         <title>Загрузить новый файл</title>
         <h1>Загрузить новый файл</h1>
         <form method=post enctype=multipart/form-data>
-            <div><label>Pash: <input type='text' name='path'></label></div>
+            <div><label>Path: <input type='text' name='path'></label></div>
             <input type=file name=file>
             <input type=submit value=Upload>
         </form>
@@ -69,22 +69,22 @@ def delete_file():
         return redirect('/all')
     return """
         <form method='POST'>
-        <div><label>Pash: <input type='text' name='path'></label></div>
+        <div><label>Path: <input type='text' name='path'></label></div>
         </form>"""
     
 
-@app.route("/seach", methods=["GET", "POST"])
-def seach_file():
+@app.route("/search", methods=["GET", "POST"])
+def search_file():
     if request.method == 'POST':
         data = []
         path = request.form.get('path').replace("\\", "\\\\")
-        cur = db.select(path, seach=True)
+        cur = db.select(path, search=True)
         data = [{head[i]: row[i] for i in range(len(head))} for row in cur]
         json_data = json.dumps(data, default=str, sort_keys=False, indent=2, ensure_ascii=False)
         return Response(json_data, mimetype='application/json; charset=utf-8')
     return """
         <form method='POST'>
-        <div><label>Pash: <input type='text' name='path'></label></div>
+        <div><label>Path: <input type='text' name='path'></label></div>
         </form>"""
 
 
@@ -95,7 +95,7 @@ def download_file():
         return send_file(path, as_attachment=True)
     return """
         <form method='POST'>
-        <div><label>Pash: <input type='text' name='path'></label></div>
+        <div><label>Path: <input type='text' name='path'></label></div>
         </form>"""
 
 @app.route("/update", methods=['GET', 'POST'])

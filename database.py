@@ -31,13 +31,13 @@ class Database:
     def write_sql(self, dirpath, filename):
         if "." in filename:
             name = filename.split(".")[0]
-            expansion = filename.split(".")[1]
+            extension = filename.split(".")[1]
         else:
             name = filename
-            expansion = ""
+            extension = ""
         stats = os.stat(os.path.join(dirpath, filename))
         self.cur.execute("INSERT INTO files (name, extension, size, path, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s)", \
-        (name, expansion, stats.st_size, os.path.join(dirpath, filename), datetime.datetime.fromtimestamp(stats.st_ctime), datetime.datetime.fromtimestamp(stats.st_mtime)))
+        (name, extension, stats.st_size, os.path.join(dirpath, filename), datetime.datetime.fromtimestamp(stats.st_ctime), datetime.datetime.fromtimestamp(stats.st_mtime)))
         self.conn.commit()
 
     def make_root(self, root):
@@ -50,10 +50,10 @@ class Database:
         self.conn.commit()
 
    
-    def select(self, path=None, seach=None):
-        if isinstance(seach, bool):
-            seach_str = f"%{path}%"
-            self.cur.execute("SELECT name, extension, size, path, created_at, updated_at, comment FROM files WHERE path LIKE %s", (seach_str, ))
+    def select(self, path=None, search=None):
+        if isinstance(search, bool):
+            search_str = f"%{path}%"
+            self.cur.execute("SELECT name, extension, size, path, created_at, updated_at, comment FROM files WHERE path LIKE %s", (search_str, ))
             return self.cur.fetchall()
         elif isinstance(path, str):
             self.cur.execute("SELECT name, extension, size, path, created_at, updated_at, comment FROM files WHERE path = %s", (path, ))
