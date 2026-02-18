@@ -131,6 +131,5 @@ def update_file_confirm():
     shutil.move(old_path, new_path)
     return f'Файл обновлен'
 
-
 if __name__ == '__main__':
     app.run(debug=True)
