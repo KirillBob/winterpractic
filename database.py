@@ -60,4 +60,3 @@ class Database:
             return self.cur.fetchall()
         self.cur.execute("SELECT name, extension, size, path, created_at, updated_at, comment FROM files")
         return self.cur.fetchall()
-        
