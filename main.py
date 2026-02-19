@@ -78,6 +78,9 @@ def download_file(file_id: int):
         return jsonify({'error': 'file not found on disk'}), 404
     return send_file(path, as_attachment=True)
 
-
 if __name__ == '__main__':
+<<<<<<< HEAD
     app.run(debug=settings.DEBUG)
+=======
+    app.run(debug=True)
+>>>>>>> e73b98e8f3f530283c4b87c9d554ab879362f7aa
