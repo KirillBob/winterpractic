@@ -179,7 +179,6 @@ curl -O http://127.0.0.1:5000/files/1/download
 ```
 WinterPractik/
 ├── main.py                 # Flask приложение и маршруты
-├── database.py             # Старая логика (депрецирована)
 ├── backend/
 │   ├── __init__.py
 │   ├── config.py           # Конфигурация
