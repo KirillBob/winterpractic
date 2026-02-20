@@ -1,6 +1,7 @@
 import os
 import shutil
 import datetime
+from pathlib import Path
 from sqlalchemy.exc import SQLAlchemyError
 from .db import SessionLocal, engine
 from .models import File, Base
@@ -13,11 +14,16 @@ class FileManager:
     def __init__(self, storage_path=None):
         self.storage_path = storage_path or os.getcwd()
 
+    @staticmethod
+    def _normalize_path(path: str) -> str:
+        return Path(path).as_posix()
+
     def list_files(self, search: str = None):
         with SessionLocal() as session:
             query = session.query(File)
             if search:
-                query = query.filter(File.path.contains(search))
+                normalized_search = self._normalize_path(search)
+                query = query.filter(File.path.contains(normalized_search))
             return [self._to_dict(f) for f in query.all()]
 
     def get(self, file_id: int):
@@ -26,8 +32,10 @@ class FileManager:
             return self._to_dict(f) if f else None
 
     def create_from_path(self, dirpath: str, filename: str):
-        full_path = os.path.join(dirpath, filename)
-        stats = os.stat(full_path)
+        normalized_dirpath = self._normalize_path(dirpath)
+        full_path = f"{normalized_dirpath}/{filename}"
+        os_path = full_path.replace('/', os.sep)
+        stats = os.stat(os_path)
         name, extension = os.path.splitext(filename)
         extension = extension.lstrip('.')
         file_obj = File(
@@ -57,8 +65,9 @@ class FileManager:
             try:
                 session.delete(f)
                 session.commit()
-                if remove_file and os.path.exists(path):
-                    os.remove(path)
+                os_path = path.replace('/', os.sep)
+                if remove_file and os.path.exists(os_path):
+                    os.remove(os_path)
                 return True
             except SQLAlchemyError:
                 session.rollback()
@@ -75,14 +84,16 @@ class FileManager:
             if comment is not None:
                 f.comment = comment
             if new_path:
-                f.path = new_path
+                normalized_new_path = self._normalize_path(new_path)
+                f.path = normalized_new_path
             try:
                 session.add(f)
                 session.commit()
-                # Try moving file on filesystem; if fails, rollback DB change
-                if new_path and old_path != new_path:
+                if new_path and old_path != f.path:
                     try:
-                        shutil.move(old_path, new_path)
+                        old_os_path = old_path.replace('/', os.sep)
+                        new_os_path = f.path.replace('/', os.sep)
+                        shutil.move(old_os_path, new_os_path)
                     except Exception as e:
                         session.rollback()
                         raise
