@@ -29,11 +29,6 @@ pip install -r requirements.txt
 postgresql+psycopg2://postgres:kirill@localhost:5432/WinterPractic
 ```
 
-Создайте БД (если не существует):
-```sql
-CREATE DATABASE "WinterPractic";
-```
-
 ### 3. Запуск приложения
 
 ```powershell
