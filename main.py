@@ -42,14 +42,11 @@ def get_file(file_id: int):
     return jsonify(f)
 
 
-@app.route('/files/<int:file_id>', methods=['PUT', 'PATCH'])
+@app.route('/files/<int:file_id>', methods=['PATCH'])
 def update_file(file_id: int):
     data = request.get_json() or {}
-    name = data.get('name')
-    new_path = data.get('path')
-    comment = data.get('comment')
     try:
-        updated = manager.update(file_id, name=name, new_path=new_path, comment=comment)
+        updated = manager.update(file_id, data)
         if not updated:
             return jsonify({'error': 'not found'}), 404
         return jsonify(updated)
