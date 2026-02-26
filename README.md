@@ -121,8 +121,10 @@ curl http://127.0.0.1:5000/files/1
 }
 ```
 
-### PUT `/files/{id}` или PATCH `/files/{id}`
+### PATCH `/files/{id}`
 Обновить метаданные файла (название, путь, комментарий).
+В запросе можно передать любые поля, они будут автоматически
+конвертированы в модель `FileUpdate` на сервисе.
 ```bash
 curl -X PATCH http://127.0.0.1:5000/files/1 \
   -H "Content-Type: application/json" \
