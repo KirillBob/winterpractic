@@ -4,7 +4,6 @@ from backend.config import settings
 import os
 
 
-
 app = Flask(__name__)
 manager = FileManager(storage_path=settings.STORAGE_PATH)
 
