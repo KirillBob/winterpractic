@@ -5,6 +5,7 @@ from pathlib import Path
 from sqlalchemy.exc import SQLAlchemyError
 from .db import SessionLocal, engine
 from .models import File, Base
+from .schemas import FileUpdate
 
 
 Base.metadata.create_all(bind=engine)
@@ -73,28 +74,35 @@ class FileManager:
                 session.rollback()
                 raise
 
-    def update(self, file_id: int, name: str = None, new_path: str = None, comment: str = None):
+    def update(self, file_id: int, update_data):
+        if isinstance(update_data, dict):
+            update_model = FileUpdate.from_dict(update_data)
+        elif isinstance(update_data, FileUpdate):
+            update_model = update_data
+        else:
+            raise TypeError("update_data must be dict or FileUpdate")
+
         with SessionLocal() as session:
             f = session.get(File, file_id)
             if not f:
                 return None
             old_path = f.path
-            if name:
-                f.name = name
-            if comment is not None:
-                f.comment = comment
-            if new_path:
-                normalized_new_path = self._normalize_path(new_path)
+            if update_model.name:
+                f.name = update_model.name
+            if update_model.comment is not None:
+                f.comment = update_model.comment
+            if update_model.path:
+                normalized_new_path = self._normalize_path(update_model.path)
                 f.path = normalized_new_path
             try:
                 session.add(f)
                 session.commit()
-                if new_path and old_path != f.path:
+                if update_model.path and old_path != f.path:
                     try:
                         old_os_path = old_path.replace('/', os.sep)
                         new_os_path = f.path.replace('/', os.sep)
                         shutil.move(old_os_path, new_os_path)
-                    except Exception as e:
+                    except Exception:
                         session.rollback()
                         raise
                 session.refresh(f)
