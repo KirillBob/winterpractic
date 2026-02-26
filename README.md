@@ -10,7 +10,6 @@ REST API для управления метаданными файлов и хр
 - **`backend/db.py`** — инициализация SQLAlchemy engine и session.
 - **`backend/models.py`** — ORM модель `File` для таблицы БД.
 - **`backend/manager.py`** — бизнес-логика (`FileManager`): CRUD операции, управление файлами и БД транзакции.
-- **`database.py`** — старый код (больше не используется).
 
 ## Установка и запуск
 
