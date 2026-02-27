@@ -9,6 +9,7 @@ REST API для управления метаданными файлов и хр
 - **`backend/config.py`** — конфигурация и переменные окружения.
 - **`backend/db.py`** — инициализация SQLAlchemy engine и session.
 - **`backend/models.py`** — ORM модель `File` для таблицы БД.
+- **`backend/schemas.py`** — `FileUpdate` модель для автоматической трансформации JSON в объекты.
 - **`backend/manager.py`** — бизнес-логика (`FileManager`): CRUD операции, управление файлами и БД транзакции.
 
 ## Установка и запуск
@@ -180,6 +181,7 @@ WinterPractik/
 │   ├── config.py           # Конфигурация
 │   ├── db.py               # SQLAlchemy engine и session
 │   ├── models.py           # ORM модели
+│   ├── schemas.py          # Модели данных для API (FileUpdate)
 │   └── manager.py          # Бизнес-логика (FileManager)
 ├── requirements.txt        # Зависимости Python
 └── README.md               # Этот файл
@@ -191,7 +193,7 @@ WinterPractik/
 - `list_files(search=None)` — получить список файлов (опционально фильтровать).
 - `get(file_id)` — получить информацию о файле.
 - `create_from_path(dirpath, filename)` — зарегистрировать существующий файл.
-- `update(file_id, name=None, new_path=None, comment=None)` — обновить метаданные.
+- `update(file_id, update_data)` — обновить метаданные, где `update_data` — dict или `FileUpdate` модель. JSON трансформируется в модель прямо в сервисе.
 - `delete(file_id, remove_file=True)` — удалить запись в БД и файл с диска.
 
 Все операции выполняются в транзакциях SQLAlchemy.
