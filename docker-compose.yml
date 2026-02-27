@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: winterpractik_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: kirill
+      POSTGRES_DB: WinterPractic
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: winterpractik_app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://postgres:kirill@db:5432/WinterPractic
+      - STORAGE_PATH=/app/storage
+      - DEBUG=False
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./storage:/app/storage
+    command: python main.py
+
+volumes:
+  postgres_data:
